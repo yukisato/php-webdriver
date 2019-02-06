@@ -187,7 +187,13 @@ class RemoteWebDriver implements WebDriver, JavaScriptExecutor, WebDriverHasInpu
             $params
         );
 
-        return $this->newElement($raw_element['ELEMENT']);
+        if (isset($raw_element['ELEMENT'])) {
+            return $this->newElement($raw_element['ELEMENT']);
+        } elseif (isset($raw_element['element-6066-11e4-a52e-4f735466cecf'])) {
+            return $this->newElement($raw_element['element-6066-11e4-a52e-4f735466cecf']);
+        }
+
+        return null;
     }
 
     /**
@@ -206,8 +212,19 @@ class RemoteWebDriver implements WebDriver, JavaScriptExecutor, WebDriverHasInpu
         );
 
         $elements = [];
+
+        if (isset($raw_elements[0])) {
+            if (isset($raw_elements[0]['ELEMENT'])) {
+                $element_key = 'ELEMENT';
+            } else {
+                $element_key = 'element-6066-11e4-a52e-4f735466cecf';
+            }
+        } else {
+            return $elements;
+        }
+
         foreach ($raw_elements as $raw_element) {
-            $elements[] = $this->newElement($raw_element['ELEMENT']);
+            $elements[] = $this->newElement($raw_element[$element_key]);
         }
 
         return $elements;
